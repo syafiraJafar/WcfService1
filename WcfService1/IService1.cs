@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -14,34 +15,90 @@ namespace WcfService1
     {
 
         [OperationContract]
-        string GetData(int value);
+        string Insert(InsertUser user);
 
         [OperationContract]
-        CompositeType GetDataUsingDataContract(CompositeType composite);
+        gettestdata GetInfo();
+
+        [OperationContract]
+        string Update(UpdateUser u);
+
+        [OperationContract]
+        string Delete(DeleteUser d);
+
+        //[OperationContract]
+        //CompositeType GetDataUsingDataContract(CompositeType composite);
 
         // TODO: Add your service operations here
+    }
+    [DataContract]
+    public class gettestdata
+    {
+        [DataMember]
+        public DataTable usertab
+        {
+            get;
+            set;
+        }
     }
 
 
     // Use a data contract as illustrated in the sample below to add composite types to service operations.
     [DataContract]
-    public class CompositeType
+    public class InsertUser
     {
-        bool boolValue = true;
-        string stringValue = "Hello ";
+        string name = string.Empty;
+        string email = string.Empty;
+
 
         [DataMember]
-        public bool BoolValue
+        public string Name
         {
-            get { return boolValue; }
-            set { boolValue = value; }
+            get { return name; }
+            set { name = value; }
         }
 
         [DataMember]
-        public string StringValue
+        public string Email
         {
-            get { return stringValue; }
-            set { stringValue = value; }
+            get { return email; }
+            set { email = value; }
+        }
+    }
+    [DataContract]
+    public class UpdateUser
+    {
+        int uid;
+        string name;
+        string email;
+        [DataMember]
+        public int UID
+        {
+            get { return uid; }
+            set { uid = value; }
+        }
+        [DataMember]
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+        [DataMember]
+        public string Email
+        {
+            get { return email; }
+            set { email = value; }
+        }
+    }
+    [DataContract]
+    public class DeleteUser
+    {
+        int uid;
+        [DataMember]
+        public int UID
+        {
+            get { return uid; }
+            set { uid = value; }
         }
     }
 }

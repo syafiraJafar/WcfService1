@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -16,18 +18,80 @@ namespace WcfService1
         {
             return string.Format("You entered: {0}", value);
         }
-
-        public CompositeType GetDataUsingDataContract(CompositeType composite)
+        public string Insert(InsertUser user)
         {
-            if (composite == null)
+            string msg;
+            SqlConnection con = new SqlConnection("Data Source=DESKTOP-CM1O7BQ;Initial Catalog=MyTestDB;User ID=sa;Password=123");
+            con.Open();
+            SqlCommand cmd = new SqlCommand("Insert into UserTab (Name, Email) values(@Name, @Email)", con);
+            cmd.Parameters.AddWithValue("@Name", user.Name);
+            cmd.Parameters.AddWithValue("@Email", user.Email);
+
+            int g = cmd.ExecuteNonQuery();
+            if(g==1)
             {
-                throw new ArgumentNullException("composite");
+                msg = "Successfully Inserted";
             }
-            if (composite.BoolValue)
+            else
             {
-                composite.StringValue += "Suffix";
+                msg = "Failed to Insert ";
             }
-            return composite;
+            return msg;
+
         }
+        public gettestdata GetInfo()
+        {
+            gettestdata g = new gettestdata();
+            SqlConnection con = new SqlConnection("Data Source=DESKTOP-CM1O7BQ;Initial Catalog=MyTestDB;User ID=sa;Password=123");
+            con.Open();
+            SqlCommand cmd = new SqlCommand("Select * from UserTab", con);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable("mytab");
+            da.Fill(dt);
+            g.usertab = dt;
+            return g;
+        }
+
+        public string Update(UpdateUser u)
+        {
+            string Message = "";
+            SqlConnection con = new SqlConnection("Data Source=DESKTOP-CM1O7BQ;Initial Catalog=MyTestDB;User ID=sa;Password=123");
+            con.Open();
+            SqlCommand cmd = new SqlCommand("Update UserTab set Name = @Name, Email = @Email where UserID = @UserID", con);
+            cmd.Parameters.AddWithValue("@UserID", u.UID);
+            cmd.Parameters.AddWithValue("@Name", u.Name);
+            cmd.Parameters.AddWithValue("@Email", u.Email);
+            int res = cmd.ExecuteNonQuery();
+            if(res == 1)
+            {
+                Message = "Successfully Updated";
+            }
+            else
+            {
+                Message = "Failed to Update";
+            }
+            return Message;
+        }
+
+        public string Delete(DeleteUser d)
+        {
+            string msg = "";
+            SqlConnection con = new SqlConnection("Data Source=DESKTOP-CM1O7BQ;Initial Catalog=MyTestDB;User ID=sa;Password=123");
+            con.Open();
+            SqlCommand cmd = new SqlCommand("delete UserTab where UserID = @UserID", con);
+            cmd.Parameters.AddWithValue("@UserID", d.UID);
+            int res = cmd.ExecuteNonQuery();
+            if (res == 1)
+            {
+                msg = "Successfully Updated";
+            }
+            else
+            {
+                msg = "Failed to Update";
+            }
+            return msg;
+        }
+
+
     }
 }
